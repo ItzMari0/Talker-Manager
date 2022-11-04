@@ -1,6 +1,10 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const { handleGetTalker, handleGetTalkerById, handleCreateToken } = require('./talkerFile');
+const { handleGetTalker,
+  handleGetTalkerById,
+  handleCreateToken,
+  emailValidation,
+  passwordValidation } = require('./talkerFile');
 
 const app = express();
 app.use(bodyParser.json());
@@ -29,7 +33,7 @@ app.get('/talker/:id', async (req, res) => {
   return res.status(200).json(talkerById);
 });
 
-app.post('/login', async (_req, res) => {
+app.post('/login', emailValidation, passwordValidation, async (_req, res) => {
   const token = await handleCreateToken();
   return res.status(200).json({ token });
 });

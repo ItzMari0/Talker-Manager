@@ -25,5 +25,32 @@ const handleCreateToken = async () => {
   return generatedToken;
 };
 
-handleCreateToken();
-module.exports = { handleGetTalker, handleGetTalkerById, handleCreateToken };
+const emailValidation = (req, res, next) => {
+  const { email } = req.body;
+  const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (email === undefined) {
+    return res.status(400).json({ message: 'O campo "email" é obrigatório' });
+  }
+  if (email.length > 0 && !EMAIL.test(email)) {
+    return res.status(400).json({ message: 'O "email" deve ter o formato "email@email.com"' });
+  }
+  return next();
+};
+
+const passwordValidation = (req, res) => {
+  const { password } = req.body;
+  const MAGICNUMBER = 6;
+  if (password === undefined) {
+    return res.status(400).json({ message: 'O campo "password" é obrigatório' });
+  }
+  if (password.length > 0 && password.length < MAGICNUMBER) {
+    return res.status(400).json({ message: 'O "password" deve ter pelo menos 6 caracteres' });
+  }
+};
+
+module.exports = { handleGetTalker,
+  handleGetTalkerById,
+  handleCreateToken,
+  emailValidation,
+  passwordValidation,
+};
