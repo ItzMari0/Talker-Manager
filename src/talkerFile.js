@@ -1,5 +1,6 @@
 const fs = require('fs').promises;
 const path = require('path');
+const token = require('crypto');
 
 const talkerdb = path.resolve(__dirname, '.', 'talker.json');
 
@@ -19,4 +20,10 @@ const handleGetTalkerById = async (id) => {
   return talkerById;
 };
 
-module.exports = { handleGetTalker, handleGetTalkerById };
+const handleCreateToken = async () => {
+  const generatedToken = token.randomBytes(8).toString('hex');
+  return generatedToken;
+};
+
+handleCreateToken();
+module.exports = { handleGetTalker, handleGetTalkerById, handleCreateToken };
