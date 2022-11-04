@@ -37,7 +37,7 @@ const emailValidation = (req, res, next) => {
   return next();
 };
 
-const passwordValidation = (req, res) => {
+const passwordValidation = (req, res, next) => {
   const { password } = req.body;
   const MAGICNUMBER = 6;
   if (password === undefined) {
@@ -46,6 +46,17 @@ const passwordValidation = (req, res) => {
   if (password.length > 0 && password.length < MAGICNUMBER) {
     return res.status(400).json({ message: 'O "password" deve ter pelo menos 6 caracteres' });
   }
+  return next();
+};
+
+const handleAddTalker = async (newTalker) => {
+  let id = 5;
+  const talker = await fetchTalker();
+  const addedTalker = { id, ...newTalker };
+  const updatedTalker = JSON.stringify([...talker, addedTalker]);
+  await fs.writeFile(path.resolve(__dirname, '.', 'talker.json'), updatedTalker);
+  id += 1;
+  return addedTalker;
 };
 
 module.exports = { handleGetTalker,
@@ -53,4 +64,5 @@ module.exports = { handleGetTalker,
   handleCreateToken,
   emailValidation,
   passwordValidation,
+  handleAddTalker,
 };

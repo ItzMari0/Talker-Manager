@@ -4,11 +4,15 @@ const { handleGetTalker,
   handleGetTalkerById,
   handleCreateToken,
   emailValidation,
-  passwordValidation } = require('./talkerFile');
+  passwordValidation,
+  handleAddTalker,
+ } = require('./talkerFile');
 
 const app = express();
 app.use(bodyParser.json());
 app.use(express.json());
+
+const tokenVerify = require('./middlewares/token');
 
 const HTTP_OK_STATUS = 200;
 const PORT = '3000';
@@ -36,6 +40,14 @@ app.get('/talker/:id', async (req, res) => {
 app.post('/login', emailValidation, passwordValidation, async (_req, res) => {
   const token = await handleCreateToken();
   return res.status(200).json({ token });
+});
+
+app.use(tokenVerify);
+
+app.post('/talker', async (req, res) => {
+  const newTalker = req.body;
+  const updatedTalker = await handleAddTalker(newTalker);
+  return res.status(201).json(updatedTalker);
 });
 
 app.listen(PORT, () => {
