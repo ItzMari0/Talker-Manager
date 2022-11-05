@@ -6,6 +6,11 @@ const { handleGetTalker,
   emailValidation,
   passwordValidation,
   handleAddTalker,
+  nameValidation,
+  ageValidation,
+  talkValidation,
+  watchedAtValidation,
+  rateValidation,
  } = require('./talkerFile');
 
 const app = express();
@@ -44,7 +49,8 @@ app.post('/login', emailValidation, passwordValidation, async (_req, res) => {
 
 app.use(tokenVerify);
 
-app.post('/talker', async (req, res) => {
+app.post('/talker', nameValidation,
+  ageValidation, talkValidation, watchedAtValidation, rateValidation, async (req, res) => {
   const newTalker = req.body;
   const updatedTalker = await handleAddTalker(newTalker);
   return res.status(201).json(updatedTalker);
