@@ -109,14 +109,24 @@ const watchedAtValidation = async (req, res, next) => {
 const rateValidation = async (req, res, next) => {
   const { talk } = req.body;
   const { rate } = talk;
-  
-  if (!rate) {
+  if (rate === undefined) {
     return res.status(400).json({ message: 'O campo "rate" é obrigatório' });
   }
   if (rate < 1 || rate > 5 || !Number.isInteger(rate)) {
     return res.status(400).json({ message: 'O campo "rate" deve ser um inteiro de 1 à 5' });
   }
   return next();
+};
+
+const handleEditTalker = async (id, object) => {
+  const talker = await fetchTalker();
+  const findTalker = talker.find((person) => person.id === id);
+  const preserveId = findTalker.id;
+  const filterTalker = talker.filter((person) => person.id !== preserveId);
+  const newTalker = { id: preserveId, ...object };
+  const updatedTalker = JSON.stringify([...filterTalker, newTalker]);
+  await fs.writeFile(path.resolve(__dirname, '.', 'talker.json'), updatedTalker);
+  return newTalker;
 };
 
 module.exports = { handleGetTalker,
@@ -130,4 +140,5 @@ module.exports = { handleGetTalker,
   talkValidation,
   watchedAtValidation,
   rateValidation,
+  handleEditTalker,
 };
