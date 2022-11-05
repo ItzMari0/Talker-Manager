@@ -58,7 +58,6 @@ app.post('/login', emailValidation, passwordValidation, async (_req, res) => {
 
 app.use(tokenVerify);
 
-
 app.post('/talker', nameValidation,
   ageValidation, talkValidation, watchedAtValidation, rateValidation, async (req, res) => {
   const newTalker = req.body;
