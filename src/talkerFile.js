@@ -120,13 +120,20 @@ const rateValidation = async (req, res, next) => {
 
 const handleEditTalker = async (id, object) => {
   const talker = await fetchTalker();
-  const findTalker = talker.find((person) => person.id === id);
+  const findTalker = talker.find((person) => person.id === Number(id));
   const preserveId = findTalker.id;
   const filterTalker = talker.filter((person) => person.id !== preserveId);
   const newTalker = { id: preserveId, ...object };
   const updatedTalker = JSON.stringify([...filterTalker, newTalker]);
   await fs.writeFile(path.resolve(__dirname, '.', 'talker.json'), updatedTalker);
   return newTalker;
+};
+
+const handleDeleteTalker = async (id) => {
+  const talker = await fetchTalker();
+  const deleteTalker = talker.filter((person) => person.id !== Number(id));
+  const updatedTalker = JSON.stringify([...deleteTalker]);
+  await fs.writeFile(path.resolve(__dirname, '.', 'talker.json'), updatedTalker);
 };
 
 module.exports = { handleGetTalker,
@@ -141,4 +148,5 @@ module.exports = { handleGetTalker,
   watchedAtValidation,
   rateValidation,
   handleEditTalker,
+  handleDeleteTalker,
 };

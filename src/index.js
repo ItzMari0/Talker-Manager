@@ -12,6 +12,7 @@ const { handleGetTalker,
   watchedAtValidation,
   rateValidation,
   handleEditTalker,
+  handleDeleteTalker,
  } = require('./talkerFile');
 
 const app = express();
@@ -61,8 +62,14 @@ app.put('/talker/:id', nameValidation,
   ageValidation, talkValidation, watchedAtValidation, rateValidation, async (req, res) => {
   const { id } = req.params;
   const object = req.body;
-  const editTalker = await handleEditTalker(Number(id), object);
+  const editTalker = await handleEditTalker(id, object);
   return res.status(200).json(editTalker);
+});
+
+app.delete('/talker/:id', async (req, res) => {
+  const { id } = req.params;
+  await handleDeleteTalker(id);
+  return res.status(204).end();
 });
 
 app.listen(PORT, () => {
