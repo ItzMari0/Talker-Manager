@@ -136,6 +136,18 @@ const handleDeleteTalker = async (id) => {
   await fs.writeFile(path.resolve(__dirname, '.', 'talker.json'), updatedTalker);
 };
 
+const handleSearchTalker = async (search) => {
+  const talker = await fetchTalker();
+  const searchTalker = talker.filter(({ name }) => name.includes(search));
+  if (!search) {
+    return talker;
+  }
+  if (searchTalker === undefined) {
+    return [];
+  }
+  return searchTalker;
+};
+
 module.exports = { handleGetTalker,
   handleGetTalkerById,
   handleCreateToken,
@@ -149,4 +161,5 @@ module.exports = { handleGetTalker,
   rateValidation,
   handleEditTalker,
   handleDeleteTalker,
+  handleSearchTalker,
 };

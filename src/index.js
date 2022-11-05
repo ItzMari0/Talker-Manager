@@ -13,18 +13,19 @@ const { handleGetTalker,
   rateValidation,
   handleEditTalker,
   handleDeleteTalker,
+  handleSearchTalker,
  } = require('./talkerFile');
 
-const app = express();
-app.use(bodyParser.json());
-app.use(express.json());
-
-const tokenVerify = require('./middlewares/token');
-
-const HTTP_OK_STATUS = 200;
-const PORT = '3000';
-
-// não remova esse endpoint, e para o avaliador funcionar
+ const app = express();
+ app.use(bodyParser.json());
+ app.use(express.json());
+ 
+ const tokenVerify = require('./middlewares/token');
+ 
+ const HTTP_OK_STATUS = 200;
+ const PORT = '3000';
+ 
+ // não remova esse endpoint, e para o avaliador funcionar
 app.get('/', (_request, response) => {
   response.status(HTTP_OK_STATUS).send();
 });
@@ -32,6 +33,12 @@ app.get('/', (_request, response) => {
 app.get('/talker', async (_req, res) => {
   const talker = await handleGetTalker();
   return res.status(200).json(talker);
+});
+
+app.get('/talker/search', tokenVerify, async (req, res) => {
+  const { q } = req.query;
+  const searchResult = await handleSearchTalker(q);
+  return res.status(200).json(searchResult);
 });
 
 app.get('/talker/:id', async (req, res) => {
@@ -51,6 +58,7 @@ app.post('/login', emailValidation, passwordValidation, async (_req, res) => {
 
 app.use(tokenVerify);
 
+
 app.post('/talker', nameValidation,
   ageValidation, talkValidation, watchedAtValidation, rateValidation, async (req, res) => {
   const newTalker = req.body;
@@ -59,7 +67,7 @@ app.post('/talker', nameValidation,
 });
 
 app.put('/talker/:id', nameValidation,
-  ageValidation, talkValidation, watchedAtValidation, rateValidation, async (req, res) => {
+ageValidation, talkValidation, watchedAtValidation, rateValidation, async (req, res) => {
   const { id } = req.params;
   const object = req.body;
   const editTalker = await handleEditTalker(id, object);
